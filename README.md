@@ -3,20 +3,20 @@
 
 ## Syntax
 
-    COMMAND<ARGS>[D] ; COMMENT
+    COMMAND<ARGS>[D]   ;COMMENT
 
-`D` must be appended to values (arguments that have user-defined length). For example, pushing the string `103105108101` requires `D` because the string can have any length.
+`D` must be appended to values (arguments that have user-defined length). For example, pushing the string `103105108101` (`"file"`) requires `D` because the string can have any length.
 
 ## Commands
 
 |Command|Name|Description|Arguments|D?|
 |-|-|-|-|-|
-|0|SET|Set stack index for other functions to use by default|Integer...|Yes|
-|1|PUSH|Push variable to stack - next char in source = type (1=INT,2=CHAR,3=STRING), next value = variable value|type, value...|Yes|
+|0|SET|Set stack index for other functions to use by default|value...|Yes|
+|1|PUSH|Push variable to stack - next char in source = type (1=INT,2=CHAR,3=STRING), next value = variable value|number, value...|Yes|
 |2|POP|Pop default stack index|N/A|No|
 |3|I/O|Next char in source represents what to read from, char after that represents where to put it (0 = stack, 1 = I/O)|from, to|No|
-|4|MATH|Next value represents mathematical operation (see Math section). This is performed as (DEFAULT STACK INDEX) (math operation) (DEFAULT STACK INDEX - 1)|operation|Yes|
-|9|JUMP|Next char in source represents a jump #. If that jump # is undeclared, declare it. Otherwise, jump to it.|jump #|Yes|
+|4|MATH|Next value represents mathematical operation (see Math section). This is performed as (DEFAULT STACK INDEX) (math operation) (DEFAULT STACK INDEX - 1)|value...|Yes|
+|9|JUMP|Next value represents a jump #. If that jump # is undeclared, declare it. Otherwise, jump to it.|value...|Yes|
 
 ## Math
 
