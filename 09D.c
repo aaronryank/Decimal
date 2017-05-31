@@ -99,11 +99,6 @@ void pop(void)
         stack_index = 0;
 }
 
-/* super(0,0) -> read from stack, put on stack (useless)
-   super(0,1) -> read from stack, print
-   super(1,1) -> read from user input, print
-   super(1,0) -> read from user input, put on stack */
-
 void io(void)
 {
     int from = getc(in) - '0';
