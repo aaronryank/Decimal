@@ -32,6 +32,7 @@ All input is read and stored/printed as a `CHAR`. `EOF` is stored as `255`. If n
 |2|POP|Pop DSI|N/A|No|
 |3|I/O|Next char in source represents what to read from, char after that represents where to put it (0 = stack, 1 = I/O). If the stack is pushed to, set DSI.|from, to|No|
 |4|MATH|Next value represents mathematical operation/conditional. Push `[DSI] (math) [DSI-1]`, pop `[DSI]` and `[DSI-1]`|value...|Yes|
+|5|COND|If DSI value is truthy, execute all code until the next COND. Otherwise, skip all code until next COND. **Note - this is buggy.**|N/A|No|
 |9|JUMP|Next value represents a jump #. If that jump # is undeclared, declare it. Otherwise, jump to it.|value...|Yes|
 
 ## Math
