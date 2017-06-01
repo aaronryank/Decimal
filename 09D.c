@@ -2,14 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* there are a lot of really useless warnings. */
 #pragma GCC diagnostic ignored "-Wformat"
 #pragma GCC diagnostic ignored "-Wunused-result"
 #pragma GCC diagnostic ignored "-Wformat-extra-args"
+#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 
 FILE *in;
 
 struct {
-   char value[100];
+   int value[100];
    int type;
 } stack[100];
 int jumps[100];
@@ -68,6 +70,8 @@ int main(int argc, char **argv)
             putchar(c);
         }
     }
+
+    return 0;
 }
 
 void set_default_stack_index(void)
@@ -90,17 +94,18 @@ void push(void)
     if (stack[stack_size].type == STRING)
     {
         int i, j;
-        fscanf(in,"%[^D]",s);
+        fscanf(in,"%[^D]",&s);
 
         for (i = j = 0; s[i]; j++, i += 3)
             stack[stack_size].value[j] = (s[i]-'0')*100+(s[i+1]-'0')*10+s[i+2]-'0';
-    } else if (stack[stack_size].type == CHAR) {
+    }
+    else if (stack[stack_size].type == CHAR) {
         fscanf(in,"%[^D]",s);
         tmp = atoi(s);
         sprintf(stack[stack_size].value,"%c",(char)tmp);
-    } else if (stack[stack_size].type == INT) {
-        fscanf(in,"%[^D]",stack[stack_size].value);
     }
+    else if (stack[stack_size].type == INT)
+        fscanf(in,"%[^D]",stack[stack_size].value);
 
     stack_index = stack_size++;
 }
@@ -127,7 +132,7 @@ void io(void)
 
     CHECK_DUMMY_QUIT;
 
-    char value[100] = {0};
+    int value[100] = {0};
     int type;
 
     if (from == 0) {
@@ -145,10 +150,9 @@ void io(void)
         stack_index = stack_size++;
     }
     else if (to == 1) {
-        if (type == STRING || type == INT)
-            printf("%s",value);
-        else if (type == CHAR)
-            putchar(value[0]);
+        int i;
+        for (i = 0; value[i]; i++)
+            putchar(value[i]);
     }
 }
 
