@@ -21,7 +21,7 @@ There are three types in Decimal: `INT`, `CHAR`, and `STRING`. These are defined
 
 ## I/O
 
-All input is read and stored/printed as a `CHAR`. `EOF` is stored as `-1`. If no input is waiting, `31x` will stop execution until input is available.
+All input is read and stored/printed as a `CHAR`. `EOF` is stored as `255`. If no input is waiting, `31x` will pause execution until input is available.
 
 ## Commands
 
@@ -30,7 +30,7 @@ All input is read and stored/printed as a `CHAR`. `EOF` is stored as `-1`. If no
 |0|SET|Set DSI to next value|value...|Yes|
 |1|PUSH|Push variable to stack - next char in source = type, next value = variable value. Set DSI to the index of the variable pushed.|number, value...|Yes|
 |2|POP|Pop DSI|N/A|No|
-|3|I/O|Next char in source represents what to read from, char after that represents where to put it (0 = stack, 1 = I/O)|from, to|No|
+|3|I/O|Next char in source represents what to read from, char after that represents where to put it (0 = stack, 1 = I/O). If the stack is pushed to, set DSI.|from, to|No|
 |4|MATH|Next value represents mathematical operation/conditional. Push `[DSI] (math) [DSI-1]`, pop `[DSI]` and `[DSI-1]`|value...|Yes|
 |9|JUMP|Next value represents a jump #. If that jump # is undeclared, declare it. Otherwise, jump to it.|value...|Yes|
 

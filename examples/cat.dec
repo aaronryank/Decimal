@@ -1,7 +1,12 @@
-  91D310301291D
-; 91D           declare jump 1
-;    310        read from user input, put on stack
-;       301     read from stack, print
-;          2    pop default stack index
-;           91D goto jump 1
-This could also be written as 91D31191D, but that would be more boring.
+ 91D 310 300 12255D 412D 590D5 2 301 2 91D
+;91D                                       declare loop 1
+;    310 300                               input -> stack, duplicate DSI
+;            12102D                        push EOF to stack
+;                   412D                   push (EOF == input)
+;                        5                 if DSI is truthy
+;                         90D              exit
+;                            5             endif
+;                              2           pop
+;                                301       print from stack to output
+;                                    2     pop
+;                                      91D infinite loop

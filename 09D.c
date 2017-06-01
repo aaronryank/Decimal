@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#pragma GCC diagnostic ignored "-Wunused-result"
-
 FILE *in;
 
 struct {
@@ -14,9 +12,12 @@ int jumps[100];
 
 int stack_index, stack_size;
 
+int dummy, tmp, tmpstr[100];
+#define CHECK_DUMMY_QUIT if(dummy)return
+
 enum { UNDEF, INT, CHAR, STRING };
 
-void set_default_stack_index(), push(), pop(), io(), math(), /*...*/ jump();
+void set_default_stack_index(), push(), pop(), io(), math(), cond(), /*...*/ jump();
 
 int main(int argc, char **argv)
 {
@@ -47,11 +48,14 @@ int main(int argc, char **argv)
           case '4':
             math();
             break;
+          case '5':
+            cond();
+            break;
           case '9':
             jump();
             break;
           case ';':
-            while ((c = getc(in)) != '\n');
+            while ((c = getc(in)) != '\n' && c != EOF);
             break;
           case ' ': case '\n': case 'D':   /* fallthroughs from functions */
             break;
@@ -59,10 +63,12 @@ int main(int argc, char **argv)
             putchar(c);
         }
     }
-} 
+}
 
 void set_default_stack_index(void)
 {
+    dummy ?
+        fscanf(in,"%dD",&tmp) :
     fscanf(in,"%dD",&stack_index);
 }
 
@@ -70,15 +76,26 @@ void push(void)
 {
     stack[stack_size].type = getc(in) - '0';
 
+    if (dummy) {
+        fscanf(in,"%[^D]",tmpstr);
+        return;
+    }
+
+    char s[100] = {0};
     if (stack[stack_size].type == STRING)
     {
         int i, j;
-        char s[100] = {0};
         fscanf(in,"%[^D]",s);
+
         for (i = j = 0; s[i]; j++, i += 3)
             stack[stack_size].value[j] = (s[i]-'0')*100+(s[i+1]-'0')*10+s[i+2]-'0';
-    } else
+    } else if (stack[stack_size].type == CHAR) {
+        fscanf(in,"%[^D]",s);
+        tmp = atoi(s);
+        sprintf(stack[stack_size].value,"%c",(char)tmp);
+    } else if (stack[stack_size].type == INT) {
         fscanf(in,"%[^D]",stack[stack_size].value);
+    }
 
     stack_index = stack_size++;
 }
@@ -86,15 +103,14 @@ void push(void)
 void pop(void)
 {
     int i;
-    for (i = stack_index; i < stack_size; i++) {
+    for (i = stack_index; i <= stack_size; i++) {
         memcpy(stack[i].value,stack[i+1].value,100);
         stack[i].type = stack[i+1].type;
     }
+
     stack_index--;
     stack_size--;
 
-    if (stack_index < stack_size)
-        stack_index = stack_size;
     if (stack_index < 0)
         stack_index = 0;
 }
@@ -104,7 +120,9 @@ void io(void)
     int from = getc(in) - '0';
     int to   = getc(in) - '0';
 
-    char value[100];
+    CHECK_DUMMY_QUIT;
+
+    char value[100] = {0};
     int type;
 
     if (from == 0) {
@@ -112,7 +130,7 @@ void io(void)
         type = stack[stack_index].type;
     }
     else if (from == 1) {
-        sprintf(value,"%.3d",getchar());
+        value[0] = getchar();
         type = CHAR;
     }
 
@@ -124,15 +142,17 @@ void io(void)
     else if (to == 1) {
         if (type == STRING || type == INT)
             printf("%s",value);
-        else if (type == CHAR) {
-            int c;
-            sscanf(value,"%d",&c);
-            putchar(c);
-        }
+        else if (type == CHAR)
+            putchar(value[0]);
     }
+
+    printf("[%d]",(int)value[0]);
 }
 
-#define _push(val) do{pop();pop();stack[stack_size].type=t1;sprintf(stack[stack_size].value,"%.3d",(val));stack_index=stack_size++;}while(0)
+#define _push(val) do{pop();pop();stack[stack_size].type=t1; \
+                      if (t1 == CHAR)sprintf(stack[stack_size].value,"%c",(val)); \
+                      else sprintf(stack[stack_size].value,"%.3d",(val)); \
+                      stack_index=stack_size++;}while(0)
 
 void math(void)
 {
@@ -145,8 +165,17 @@ void math(void)
     register const int t2 = stack[stack_index-1].type;
 
     int ival1, ival2;
-    sscanf(val1,"%d",&ival1);
-    sscanf(val2,"%d",&ival2);
+    if (t1 == CHAR)
+        sscanf(val1,"%c",&ival1);
+    else
+        sscanf(val1,"%d",&ival1);
+
+    if (t2 == CHAR)
+        sscanf(val2,"%c",&ival2);
+    else
+        sscanf(val2,"%d",&ival2);
+
+    CHECK_DUMMY_QUIT;
 
     switch (x)
     {
@@ -201,6 +230,27 @@ void math(void)
     }
 }
 
+void cond()
+{
+    if (dummy) {
+        dummy = 0;
+        return;
+    }
+
+    int type = stack[stack_index].type;
+    int val = 0;
+
+    if (type == INT)
+        sscanf(stack[stack_index].value,"%.3d",&val);
+    else if (type == CHAR)
+        val = stack[stack_index].value[0];
+
+    if (val)
+        dummy = 0;
+    else
+        dummy = 1;
+}
+
 /* ... */
 
 void
@@ -208,6 +258,8 @@ jump(void)
 {
     int j;
     fscanf(in,"%dD",&j);
+
+    CHECK_DUMMY_QUIT;
 
     /* the only way to quit the program :D */
     if (j == 0)

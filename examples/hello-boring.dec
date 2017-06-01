@@ -1,0 +1,8 @@
+; Note: If this doesn't work, it means I fixed the interpreter. Open a PR or issue telling me to remove this.
+ Hello,12032D301World!12010D301
+;Hello,                         print "Hello,"
+;      12032D                   push char ' '
+;            301                print
+;               World!          print "World!"
+;                     12010D    push '\n'
+;                           301 print
