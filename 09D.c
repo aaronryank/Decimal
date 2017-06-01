@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#pragma GCC diagnostic ignored "-Wformat"
+#pragma GCC diagnostic ignored "-Wunused-result"
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
+
 FILE *in;
 
 struct {
@@ -12,7 +16,8 @@ int jumps[100];
 
 int stack_index, stack_size;
 
-int dummy, tmp, tmpstr[100];
+int dummy, tmp;
+char tmpstr[100];
 #define CHECK_DUMMY_QUIT if(dummy)return
 
 enum { UNDEF, INT, CHAR, STRING };
@@ -145,8 +150,6 @@ void io(void)
         else if (type == CHAR)
             putchar(value[0]);
     }
-
-    printf("[%d]",(int)value[0]);
 }
 
 #define _push(val) do{pop();pop();stack[stack_size].type=t1; \
