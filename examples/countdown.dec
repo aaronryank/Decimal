@@ -1,0 +1,10 @@
+11100D301   ; push INT 100, print
+12010D3012  ; push CHAR 10, print, pop
+
+91D         ; declare jump 1
+111D42D     ; push 1, push subtraction (prev value - 1) and pop values used in subtraction
+5           ; if truthy
+301         ; print
+12010D3012  ; print newline
+91D         ; goto jump 1
+5           ; end if

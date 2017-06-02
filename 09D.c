@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <stdint.h>
 
 /* there are a lot of really useless warnings. */
 #pragma GCC diagnostic ignored "-Wformat"
@@ -8,10 +10,12 @@
 #pragma GCC diagnostic ignored "-Wformat-extra-args"
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 
+#define DEBUG_DSI printf("[DSI=%d,%s]\n",stack[stack_index].type,stack[stack_index].value);
+
 FILE *in;
 
 struct {
-   int value[100];
+   uint32_t value[100];
    int type;
 } stack[100];
 int jumps[100];
@@ -22,7 +26,7 @@ int dummy, tmp;
 char tmpstr[100];
 #define CHECK_DUMMY_QUIT if(dummy)return
 
-enum { UNDEF, INT, CHAR, STRING };
+enum { UNDEF=0, INT=1, CHAR=2, STRING=3 };
 
 void set_default_stack_index(), push(), pop(), io(), math(), cond(), /*...*/ jump();
 
@@ -108,10 +112,14 @@ void push(void)
         fscanf(in,"%[^D]",stack[stack_size].value);
 
     stack_index = stack_size++;
+
+    //DEBUG_DSI;
 }
 
 void pop(void)
 {
+    CHECK_DUMMY_QUIT;
+
     int i;
     for (i = stack_index; i <= stack_size; i++) {
         memcpy(stack[i].value,stack[i+1].value,100);
@@ -132,8 +140,10 @@ void io(void)
 
     CHECK_DUMMY_QUIT;
 
-    int value[100] = {0};
+    uint32_t value[100] = {0};
     int type;
+
+    //DEBUG_DSI;
 
     if (from == 0) {
         memcpy(value,stack[stack_index].value,100);
@@ -150,15 +160,21 @@ void io(void)
         stack_index = stack_size++;
     }
     else if (to == 1) {
-        int i;
-        for (i = 0; value[i]; i++)
-            putchar(value[i]);
+        if (type == INT)
+            printf("%s",value);
+        else {
+            int i;
+            for (i = 0; value[i]; i++)
+                putchar((char)value[i]);
+        }
     }
+
+    //DEBUG_DSI;
 }
 
 #define _push(val) do{pop();pop();stack[stack_size].type=t1; \
                       if (t1 == CHAR)sprintf(stack[stack_size].value,"%c",(val)); \
-                      else sprintf(stack[stack_size].value,"%.3d",(val)); \
+                      else sprintf(stack[stack_size].value,"%d",(val)); \
                       stack_index=stack_size++;}while(0)
 
 void math(void)
@@ -173,14 +189,14 @@ void math(void)
 
     int ival1, ival2;
     if (t1 == CHAR)
-        sscanf(val1,"%c",&ival1);
+        sscanf(val2,"%c",&ival1);
     else
-        sscanf(val1,"%d",&ival1);
+        sscanf(val2,"%d",&ival1);
 
     if (t2 == CHAR)
-        sscanf(val2,"%c",&ival2);
+        sscanf(val1,"%c",&ival2);
     else
-        sscanf(val2,"%d",&ival2);
+        sscanf(val1,"%d",&ival2);
 
     CHECK_DUMMY_QUIT;
 
@@ -235,6 +251,8 @@ void math(void)
         _push(ival1 < ival2);
         break;
     }
+
+    //DEBUG_DSI;
 }
 
 void cond()
@@ -244,11 +262,13 @@ void cond()
         return;
     }
 
+    //DEBUG_DSI;
+
     int type = stack[stack_index].type;
     int val = 0;
 
     if (type == INT)
-        sscanf(stack[stack_index].value,"%.3d",&val);
+        sscanf(stack[stack_index].value,"%d",&val);
     else if (type == CHAR)
         val = stack[stack_index].value[0];
 
@@ -268,7 +288,6 @@ jump(void)
 
     CHECK_DUMMY_QUIT;
 
-    /* the only way to quit the program :D */
     if (j == 0)
         exit(EXIT_SUCCESS);
 
