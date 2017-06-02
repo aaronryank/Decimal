@@ -1,5 +1,5 @@
 # Decimal
-Decimal, also called 09D, is an esoteric stack-based programming language that uses the characters `0` through `9` and `D`. Any other characters in the source code are simply printed.
+Decimal, also called 09D, is an esoteric stack-based programming language that uses the characters `0` through `9` and `D`. Whitespace is ignored. Any other characters in the source code are simply printed.
 
 ## Syntax
 
@@ -30,8 +30,8 @@ All input is read and stored/printed as a `CHAR`. `EOF` is stored as `255`. If n
 |2|POP|Pop DSI|N/A|No|
 |3|I/O|Next char in source represents what to read from, char after that represents where to put it (0 = stack, 1 = I/O). If the stack is pushed to, set DSI.|from, to|No|
 |4|MATH|Next value represents mathematical operation/conditional. Push `[DSI-1] (math) [DSI]`, pop `[DSI]` and `[DSI-1]`|value...|Yes|
-|5|COND|If DSI value is truthy, execute all code until the next COND. Otherwise, skip all code until next COND. **Note - this is buggy.**|N/A|No|
-|9|JUMP|Next value represents a jump #. If that jump # is undeclared, declare it. Otherwise, jump to it.|value...|Yes|
+|5|COND|If DSI value is truthy, execute all code until the next COND. Otherwise, skip all code until next COND.|N/A|No|
+|9|JUMP|Next value represents a jump #. If that jump # is undeclared, declare it. Otherwise, jump to it. If currently in an IF-statement, exit the IF-statement before performing the jump. `JUMP`ing to 0 will exit the program.|value...|Yes|
 
 ## Math
 
@@ -73,3 +73,5 @@ Each conditional will push `001` if truthy and `000` if falsy:
  - `310` - read user input into stack
  - `91D 311 91D` - cat program
  - `13072069076076079044032087079082076068033010D 301` push "HELLO, WORLD!\n" to stack and print
+
+For (possibly) more information, check out the [Decimal language showcase](https://codegolf.stackexchange.com/a/124235/61563) at PPCG StackExchange.
