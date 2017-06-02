@@ -68,7 +68,7 @@ int main(int argc, char **argv)
           case ';':
             while ((c = getc(in)) != '\n' && c != EOF);
             break;
-          case ' ': case '\n': case 'D':   /* fallthroughs from functions */
+          case ' ': case 10: case 13: case 'D':   /* fallthroughs from functions */
             break;
           default:
             putchar(c);
@@ -108,8 +108,11 @@ void push(void)
         tmp = atoi(s);
         sprintf(stack[stack_size].value,"%c",(char)tmp);
     }
-    else if (stack[stack_size].type == INT)
-        fscanf(in,"%[^D]",stack[stack_size].value);
+    else if (stack[stack_size].type == INT) {
+        unsigned long long x;
+        fscanf(in,"%lluD",&x);
+        sprintf(stack[stack_size].value,"%llu",x);
+    }
 
     stack_index = stack_size++;
 
@@ -161,7 +164,7 @@ void io(void)
     }
     else if (to == 1) {
         if (type == INT)
-            printf("%s",value);
+            printf(value);
         else {
             int i;
             for (i = 0; value[i]; i++)
