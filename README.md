@@ -70,6 +70,7 @@ Each conditional will push `001` if truthy and `000` if falsy:
 Memory commands:
 
 |Command|Name|Description|Sets DSI?|
+|-|-|-|-|
 |1|Stash|Pop DSI, store into memory|Yes|
 |2|Pop|Pop memory, push to stack|Yes|
 
