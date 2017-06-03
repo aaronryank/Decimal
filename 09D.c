@@ -17,7 +17,7 @@ FILE *in;
 struct {
    uint32_t value[100];
    int type;
-} stack[100];
+} stack[100], memory;
 int jumps[100];
 
 int stack_index, stack_size;
@@ -28,7 +28,7 @@ char tmpstr[100];
 
 enum { UNDEF=0, INT=1, CHAR=2, STRING=3 };
 
-void set_default_stack_index(), push(), pop(), io(), math(), cond(), /*...*/ jump();
+void set_default_stack_index(), push(), pop(), io(), math(), cond(), mem(), /*...*/ jump();
 
 int main(int argc, char **argv)
 {
@@ -61,6 +61,9 @@ int main(int argc, char **argv)
             break;
           case '5':
             cond();
+            break;
+          case '6':
+            mem();
             break;
           case '9':
             jump();
@@ -106,7 +109,7 @@ void push(void)
     else if (stack[stack_size].type == CHAR) {
         fscanf(in,"%[^D]",s);
         tmp = atoi(s);
-        sprintf(stack[stack_size].value,"%c",(char)tmp);
+        stack[stack_size].value[0]=tmp;
     }
     else if (stack[stack_size].type == INT) {
         unsigned long long x;
@@ -134,6 +137,8 @@ void pop(void)
 
     if (stack_index < 0)
         stack_index = 0;
+    if (stack_size < 0)
+        stack_size = 0;
 }
 
 void io(void)
@@ -281,6 +286,23 @@ void cond()
         dummy = 1;
 }
 
+void mem(void)
+{
+    int c = getc(in) - '0';
+
+    switch (c) {
+      case 1:
+        memory.type = stack[stack_index].type;
+        memcpy(memory.value, stack[stack_index].value, 100);
+        pop();
+        break;
+      case 2:
+        stack[stack_size].type = memory.type;
+        memcpy(stack[stack_size].value, memory.value, 100);
+        stack_index = stack_size++;
+        break;
+    }
+}
 /* ... */
 
 void

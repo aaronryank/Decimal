@@ -31,6 +31,7 @@ All input is read and stored/printed as a `CHAR`. `EOF` is stored as `255`. If n
 |3|I/O|Next char in source represents what to read from, char after that represents where to put it (0 = stack, 1 = I/O). If the stack is pushed to, set DSI.|from, to|No|
 |4|MATH|Next value represents mathematical operation/conditional. Push `[DSI-1] (math) [DSI]`, pop `[DSI]` and `[DSI-1]`|value...|Yes|
 |5|COND|If DSI value is truthy, execute all code until the next COND. Otherwise, skip all code until next COND.|N/A|No|
+|6|MEM|See section Memory.|number|No|
 |9|JUMP|Next value represents a jump #. If that jump # is undeclared, declare it. Otherwise, jump to it. If currently in an IF-statement, exit the IF-statement before performing the jump. `JUMP`ing to 0 will exit the program.|value...|Yes|
 
 ## Math
@@ -63,6 +64,14 @@ Each conditional will push `001` if truthy and `000` if falsy:
 |15|`<=`|is less than or equal to|
 |16|`>`|is larger than|
 |17|`<`|is less than|
+
+## Memory
+
+Memory commands:
+
+|Command|Name|Description|Sets DSI?|
+|1|Stash|Pop DSI, store into memory|Yes|
+|2|Pop|Pop memory, push to stack|Yes|
 
 ## Examples
 
