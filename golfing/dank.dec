@@ -1,0 +1,35 @@
+91D
+ 310 300    ; input to stack, duplicate
+ 12090D     ; push CHAR 'Z' to stack
+ 415D       ; compare <, pop values used, push result
+
+ 5          ; if truthy
+  61        ;  put result into memory
+  12032D    ;  push CHAR 32 to stack
+  41D       ;  math +, pop values used, push result
+  62        ;  pop memory to stack
+ 5          ; endif
+
+ 2          ; pop
+
+ 300        ; duplicate DSI
+ 12122D     ; push CHAR 'z' to stack
+ 416D       ; compare >, pop values used, push result
+ 5          ; if truthy
+  291D      ; pop, restart
+ 5          ; endif
+
+ 2          ; pop
+
+ 300        ; duplicate DSI
+ 12097D     ; push CHAR 'a' to stack
+ 417D       ; compare <, pop values uesd, push result
+ 5          ; if truthy
+  291D      ; pop, restart
+ 5          ; endif
+
+ 2          ; pop
+
+ 3012       ; print, pop
+ 12032D3012 ; push CHAR ' ', print, pop
+91D

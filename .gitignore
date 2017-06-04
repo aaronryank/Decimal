@@ -2,3 +2,7 @@
 09D.exe
 test
 test/*
+test.dec
+tools/*.exe
+tools/char
+tools/ascii

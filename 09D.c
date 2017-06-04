@@ -28,7 +28,7 @@ char tmpstr[100];
 
 enum { UNDEF=0, INT=1, CHAR=2, STRING=3 };
 
-void set_default_stack_index(), push(), pop(), io(), math(), cond(), mem(), /*...*/ jump();
+void set_default_stack_index(), push(), pop(), io(), math(), cond(), mem(), /*...*/ builtins(), jump();
 
 int main(int argc, char **argv)
 {
@@ -64,6 +64,9 @@ int main(int argc, char **argv)
             break;
           case '6':
             mem();
+            break;
+          case '8':
+            builtins();
             break;
           case '9':
             jump();
@@ -290,6 +293,8 @@ void mem(void)
 {
     int c = getc(in) - '0';
 
+    CHECK_DUMMY_QUIT;
+
     switch (c) {
       case 1:
         memory.type = stack[stack_index].type;
@@ -303,6 +308,23 @@ void mem(void)
         break;
     }
 }
+
+void builtins(void)
+{
+    int num;
+    fscanf(in,"%dD",&num);
+
+    CHECK_DUMMY_QUIT;
+
+    switch(num) {
+      case 1:
+        scanf("%s",&stack[stack_size].value);
+        stack[stack_size].type = INT;
+        stack_index = stack_size++;
+        break;
+    }
+}
+
 /* ... */
 
 void
@@ -321,3 +343,10 @@ jump(void)
     else
         jumps[j] = ftell(in);
 }
+
+/*      case 3:
+        tmp = atoi(memory.value);
+        memory.type = INT;
+        memset(memory.value,0,100);
+        sprintf(memory.value,"%d",tmp);
+        break; */

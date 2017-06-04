@@ -1,8 +1,8 @@
  91D 310 300 12255D 412D 590D5 2 301 2 91D
 ;91D                                       declare loop 1
 ;    310 300                               input -> stack, duplicate DSI
-;            12102D                        push EOF to stack
-;                   412D                   push (EOF == input)
+;            12255D                        push EOF to stack
+;                   412D                   push (input == EOF), pop values used
 ;                        5                 if DSI is truthy
 ;                         90D              exit
 ;                            5             endif

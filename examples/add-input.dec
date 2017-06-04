@@ -1,0 +1,6 @@
+; Builtins make stuff boring, but the program to do this before builtins was 110 characters,
+;  so I figured it was a good trade.
+81D    ; read INT from input to stack
+81D    ; read INT from input to stack
+41D    ; math +
+301    ; print result

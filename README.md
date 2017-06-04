@@ -32,11 +32,12 @@ All input is read and stored/printed as a `CHAR`. `EOF` is stored as `255`. If n
 |4|MATH|Next value represents mathematical operation/conditional. Push `[DSI-1] (math) [DSI]`, pop `[DSI]` and `[DSI-1]`|value...|Yes|
 |5|COND|If DSI value is truthy, execute all code until the next COND. Otherwise, skip all code until next COND.|N/A|No|
 |6|MEM|See section Memory.|number|No|
+|8|BUILTIN|Builtin functions. See section Builtins.|value...|Yes|
 |9|JUMP|Next value represents a jump #. If that jump # is undeclared, declare it. Otherwise, jump to it. If currently in an IF-statement, exit the IF-statement before performing the jump. `JUMP`ing to 0 will exit the program.|value...|Yes|
 
 ## Math
 
-As previously stated, all mathematical operations are performed as `[DSI] operation [DSI-1]`.
+As previously stated, all mathematical operations are performed as `[DSI-1] operation [DSI]`.
 
 For example: if `[DSI]` was `{INT, 040}` and `[DSI-1]` was `{INT, 030}`, performing the mathematical operation "minus" would compute `30 - 40`, pop `[DSI]` and `[DSI-1]`, then push the result.
 
@@ -69,18 +70,30 @@ Each conditional will push `001` if truthy and `000` if falsy:
 
 Memory commands:
 
-|Command|Name|Description|Sets DSI?|
+|Number|Name|Description|Sets DSI?|
+|-|-|-|-|
 |1|Stash|Pop DSI, store into memory|Yes|
 |2|Pop|Pop memory, push to stack|Yes|
+
+## Builtins
+
+Useful builtins that are ridiculously hard (or even downright impossible) to do with the existing commands:
+
+As builtins kind of ruin the esotericity of a language and lower the complexity to write code in it, I'm only going to write builtins that are unjustifiably difficult to do without them.
+
+|Number|Name|Description|Sets DSI?|Why it's a builtin|
+|-|-|-|-|-|
+|1|Read|Read INT from input to stack (reads until newline)|Yes|It takes ~50 characters to do this using only standard commands and gets real messy|
 
 ## Examples
 
  - `11003D` - push integer 3 to stack, set DSI to pushed value
  - `91D 91D` - infinite loop that does nothing
  - `11050D 11050D 41D` - push integer 50 to stack, push integer 50 to stack, pop both then add together and push result
- - `311` - read user input and print, without doing anything with the stack
+ - `311` - read user input and print, without doing anything to the stack
  - `310` - read user input into stack
- - `91D 311 91D` - cat program
+ - `91D 311 91D` - cat program that doesn't stop at EOF
+ - `91D 310 300 12255D 412D 5 90D 5 2 301 2 91D` - cat program that stops at EOF
  - `13072069076076079044032087079082076068033010D 301` push "HELLO, WORLD!\n" to stack and print
 
 For (possibly) more information, check out the [Decimal language showcase](https://codegolf.stackexchange.com/a/124235/61563) at PPCG StackExchange.
