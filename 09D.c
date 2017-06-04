@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdint.h>
+#include <time.h>
 
 /* there are a lot of really useless warnings. */
 #pragma GCC diagnostic ignored "-Wformat"
@@ -32,6 +33,7 @@ void set_default_stack_index(), push(), pop(), io(), math(), cond(), mem(), /*..
 
 int main(int argc, char **argv)
 {
+    srand(time(NULL));
     in = (argc > 1) ? fopen(argv[1],"r") : stdin;
 
     if (!in)
@@ -319,6 +321,11 @@ void builtins(void)
     switch(num) {
       case 1:
         scanf("%s",&stack[stack_size].value);
+        stack[stack_size].type = INT;
+        stack_index = stack_size++;
+        break;
+      case 2:
+        sprintf(stack[stack_size].value,"%d",(int)rand());
         stack[stack_size].type = INT;
         stack_index = stack_size++;
         break;

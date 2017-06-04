@@ -84,6 +84,7 @@ As builtins kind of ruin the esotericity of a language and lower the complexity 
 |Number|Name|Description|Sets DSI?|Why it's a builtin|
 |-|-|-|-|-|
 |1|Read|Read INT from input to stack (reads until newline)|Yes|It takes ~50 characters to do this using only standard commands and gets real messy|
+|2|Rand|Push random INT to stack|Yes|Impossible to do using only standard commands|
 
 ## Examples
 
