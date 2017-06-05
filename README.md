@@ -1,6 +1,8 @@
 # Decimal
 Decimal, also called 09D, is an esoteric stack-based programming language that uses the characters `0` through `9` and `D`. Whitespace is ignored. Any other characters in the source code are simply printed.
 
+[Try it online!](//tio.run/#Decimal) [Esolang wiki, probably outdated](//wiki.esolangs.org/wiki/Decimal)
+
 ## Syntax
 
     COMMAND<ARGS>[D]   ;COMMENT
@@ -73,11 +75,11 @@ Memory commands:
 |Number|Name|Description|Sets DSI?|
 |-|-|-|-|
 |1|Stash|Pop DSI, store into memory|Yes|
-|2|Pop|Pop memory, push to stack|Yes|
+|2|Copy|Copy memory to stack|Yes|
 
 ## Builtins
 
-Useful builtins that are ridiculously hard (or even downright impossible) to do with the existing commands:
+Useful builtins that are ridiculously hard (or even downright impossible) to do with the existing commands.
 
 As builtins kind of ruin the esotericity of a language and lower the complexity to write code in it, I'm only going to write builtins that are unjustifiably difficult to do without them.
 
