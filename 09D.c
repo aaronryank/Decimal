@@ -329,6 +329,11 @@ void builtins(void)
         stack[stack_size].type = INT;
         stack_index = stack_size++;
         break;
+      case 3:
+        scanf("%s",&stack[stack_size].value);
+        stack[stack_size].type = STRING;
+        stack_index = stack_size++;
+        break;
     }
 }
 
