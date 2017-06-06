@@ -5,41 +5,45 @@
 #include <stdint.h>
 #include <time.h>
 
-/* there are a lot of really useless warnings. */
-#pragma GCC diagnostic ignored "-Wformat"
-#pragma GCC diagnostic ignored "-Wunused-result"
-#pragma GCC diagnostic ignored "-Wformat-extra-args"
+/* due to the uint32_t typing of stack.value, this is obnoxious */
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 
+/* macros */
 #define DEBUG_DSI printf("[DSI=%d,%s]\n",stack[stack_index].type,stack[stack_index].value);
+#define decstr(s,i) ((s[i]-'0')*100+(s[i+1]-'0')*10+s[i+2]-'0')
 
 FILE *in;
 
+/* the stack */
 struct {
    uint32_t value[100];
    int type;
 } stack[100], memory;
+int stack_index, stack_size;
+enum { UNDEF=0, INT=1, CHAR=2, STRING=3 };
+
+/* jumps */
 int jumps[100];
 
-int stack_index, stack_size;
-
+/* working with COND */
 int dummy, tmp;
 char tmpstr[100];
 #define CHECK_DUMMY_QUIT if(dummy)return
 
-enum { UNDEF=0, INT=1, CHAR=2, STRING=3 };
-
-void set_default_stack_index(), push(), pop(), io(), math(), cond(), mem(), /*...*/ builtins(), jump();
+/* declarations */
+void set_default_stack_index(), push(), pop(), io(), math(), cond(), mem(), builtins(), jump();
 
 int main(int argc, char **argv)
 {
-    srand(time(NULL));
     in = (argc > 1) ? fopen(argv[1],"r") : stdin;
 
     if (!in)
-        in = stdin;
+        fprintf(stderr,"Error opening file %s, defaulting to STDIN.\n",argv[1]), in = stdin;
     if (fileno(in) == fileno(stdin))
         fprintf(stderr,"Warning: Jumps may not work properly when reading from STDIN.\n");
+
+    /* builtins */
+    srand(time(NULL));
 
     int c;
     while ((c = getc(in)) != EOF)
@@ -67,6 +71,9 @@ int main(int argc, char **argv)
           case '6':
             mem();
             break;
+          case '7':
+            // nope
+            break;
           case '8':
             builtins();
             break;
@@ -86,6 +93,7 @@ int main(int argc, char **argv)
     return 0;
 }
 
+/* am I a dummy? if so, bad code. */
 void set_default_stack_index(void)
 {
     dummy ?
@@ -93,6 +101,7 @@ void set_default_stack_index(void)
     fscanf(in,"%dD",&stack_index);
 }
 
+/* ~30 lines of suicide coming up. */
 void push(void)
 {
     stack[stack_size].type = getc(in) - '0';
@@ -106,10 +115,10 @@ void push(void)
     if (stack[stack_size].type == STRING)
     {
         int i, j;
-        fscanf(in,"%[^D]",&s);
+        fscanf(in,"%[^D]",s);
 
         for (i = j = 0; s[i]; j++, i += 3)
-            stack[stack_size].value[j] = (s[i]-'0')*100+(s[i+1]-'0')*10+s[i+2]-'0';
+            stack[stack_size].value[j] = decstr(s,i);
     }
     else if (stack[stack_size].type == CHAR) {
         fscanf(in,"%[^D]",s);
@@ -117,9 +126,7 @@ void push(void)
         stack[stack_size].value[0]=tmp;
     }
     else if (stack[stack_size].type == INT) {
-        unsigned long long x;
-        fscanf(in,"%lluD",&x);
-        sprintf(stack[stack_size].value,"%llu",x);
+        fscanf(in,"%[^D]",(char*)stack[stack_size].value);
     }
 
     stack_index = stack_size++;
@@ -154,7 +161,7 @@ void io(void)
     CHECK_DUMMY_QUIT;
 
     uint32_t value[100] = {0};
-    int type;
+    int type = UNDEF;
 
     //DEBUG_DSI;
 
@@ -174,7 +181,7 @@ void io(void)
     }
     else if (to == 1) {
         if (type == INT)
-            printf(value);
+            printf("%s",(char*)value);
         else {
             int i;
             for (i = 0; value[i]; i++)
@@ -185,7 +192,7 @@ void io(void)
     //DEBUG_DSI;
 }
 
-#define _push(val) do{pop();pop();stack[stack_size].type=t1; \
+#define _push(val) do{pop();pop();stack[stack_size].type=t2; \
                       if (t1 == CHAR)sprintf(stack[stack_size].value,"%c",(val)); \
                       else sprintf(stack[stack_size].value,"%d",(val)); \
                       stack_index=stack_size++;}while(0)
@@ -195,24 +202,26 @@ void math(void)
     int x;
     fscanf(in,"%dD",&x);
 
-    register char *val1   = stack[stack_index].value;
-    register char *val2   = stack[stack_index-1].value;
+    register char *val1   = (char*)stack[stack_index].value;
+    register char *val2   = (char*)stack[stack_index-1].value;
     register const int t1 = stack[stack_index].type;
     register const int t2 = stack[stack_index-1].type;
 
+    /* 'cause who doesn't love impossible-to-understand code? */
     int ival1, ival2;
     if (t1 == CHAR)
-        sscanf(val2,"%c",&ival1);
+        sscanf(val2,"%c",(char*)&ival1);
     else
         sscanf(val2,"%d",&ival1);
 
     if (t2 == CHAR)
-        sscanf(val1,"%c",&ival2);
+        sscanf(val1,"%c",(char*)&ival2);
     else
         sscanf(val1,"%d",&ival2);
 
     CHECK_DUMMY_QUIT;
 
+    /* if C had an eval statement I could save ~50 obnoxious lines */
     switch (x)
     {
       case 1:
@@ -320,7 +329,7 @@ void builtins(void)
 
     switch(num) {
       case 1:
-        scanf("%s",&stack[stack_size].value);
+        scanf("%s",(char*)stack[stack_size].value);
         stack[stack_size].type = INT;
         stack_index = stack_size++;
         break;
@@ -329,15 +338,8 @@ void builtins(void)
         stack[stack_size].type = INT;
         stack_index = stack_size++;
         break;
-      case 3:
-        scanf("%s",&stack[stack_size].value);
-        stack[stack_size].type = STRING;
-        stack_index = stack_size++;
-        break;
     }
 }
-
-/* ... */
 
 void
 jump(void)
@@ -355,10 +357,3 @@ jump(void)
     else
         jumps[j] = ftell(in);
 }
-
-/*      case 3:
-        tmp = atoi(memory.value);
-        memory.type = INT;
-        memset(memory.value,0,100);
-        sprintf(memory.value,"%d",tmp);
-        break; */

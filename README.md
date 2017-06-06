@@ -41,7 +41,7 @@ All input is read and stored/printed as a `CHAR`. `EOF` is stored as `255`. If n
 
 As previously stated, all mathematical operations are performed as `[DSI-1] operation [DSI]`.
 
-For example: if `[DSI]` was `{INT, 040}` and `[DSI-1]` was `{INT, 030}`, performing the mathematical operation "minus" would compute `30 - 40`, pop `[DSI]` and `[DSI-1]`, then push the result.
+For example: if `[DSI-1]` was `{INT,30}` and `[DSI]` was `{INT,40}`, performing the mathematical operation "minus" would compute `30 - 40`, pop `[DSI-1]` and `[DSI]`, then push the result.
 
 |Number|Operation|Name|
 |-|-|-|
@@ -85,9 +85,8 @@ As builtins kind of ruin the esotericity of a language and lower the complexity 
 
 |Number|Name|Description|Sets DSI?|Why it's a builtin|
 |-|-|-|-|-|
-|1|Read|Read INT from input to stack (reads until whitespace)|Yes|It takes ~50 characters to do this using only standard commands and gets real messy|
+|1|Read|Read INT from input to stack (reads until newline)|Yes|It takes ~50 characters to do this using only standard commands and gets real messy|
 |2|Rand|Push random INT to stack|Yes|Impossible to do using only standard commands|
-|3|Str|Read STRING from input to stack|Yes|Impossiblie to do using only standard commands|
 
 ## Examples
 
