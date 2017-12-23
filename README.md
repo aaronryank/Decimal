@@ -1,6 +1,4 @@
-# Decimal
-
-![No, really. I typed the entire thing using Microsoft Notepad, no joke.](http://i.imgur.com/FMMMOtk.gif)
+# Decimal ![No, really. I typed the entire thing using Microsoft Notepad, no joke.](http://i.imgur.com/FMMMOtk.gif)
 
 Decimal, also called 09D, is an esoteric stack-based programming language that uses the characters `0` through `9` and `D`. Whitespace is ignored. Any other characters in the source code are simply printed.
 
