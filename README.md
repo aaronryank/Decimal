@@ -2,7 +2,7 @@
 
 Decimal, also called 09D, is an esoteric stack-based programming language that uses the characters `0` through `9` and `D`. Whitespace is ignored. Any other characters in the source code are simply printed.
 
-[Try it online!](//tio.run/#Decimal) [Esolang wiki, probably outdated](//wiki.esolangs.org/wiki/Decimal)
+[Try it online!](//tio.run/#Decimal) [Esolang wiki, probably outdated](//esolangs.org/wiki/Decimal)
 
 ## Syntax
 
