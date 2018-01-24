@@ -85,8 +85,6 @@ int main(int argc, char **argv)
             break;
           case ' ': case 10: case 13: case 'D':   /* fallthroughs from functions */
             break;
-          default:
-            putchar(c);
         }
     }
 
