@@ -52,7 +52,7 @@ For example: if `[DSI-1]` was `{INT,30}` and `[DSI]` was `{INT,40}`, performing 
 |4|`/`|divided by|
 |5|`%`|modulo|
 |6|`&`|bitwise AND|
-|7|`|`|bitwise OR|
+|7|`\|`|bitwise OR|
 |8|`^`|bitwise XOR|
 |9|`<<`|bitwise left-shift|
 |10|`>>`|bitwise right-shift|
